@@ -25,11 +25,6 @@ $ curl -fsSL -o pinentry-touchid "https://github.com/felix-kaestner/pinentry-tou
 $ mv pinentry-touchid /usr/local/bin/pinentry-touchid
 ```
 
-Configure the `gpg-agent` to use `pinentry-touchid` as its pinentry program. Add or replace the following line to your gpg agent configuration in: `~/.gnupg/gpg-agent.conf`:
-```sh
-$ pinentry-program /usr/local/bin/pinentry-touchid
-```
-
 ### Manual
 
 Clone the repository:
@@ -75,5 +70,12 @@ Fill in the prompt with the following information:
 * Password: Your Passphrase
 
 Finally, click on `Add`.
+
+<img width="641" src="https://user-images.githubusercontent.com/23213965/162564229-2f6149f6-49c5-472a-a1c9-e4a9c0494205.png">
+
+Configure the `gpg-agent` to use `pinentry-touchid` as its pinentry program. Add or replace the following line to your gpg agent configuration in: `~/.gnupg/gpg-agent.conf`:
+```sh
+$ pinentry-program /usr/local/bin/pinentry-touchid
+```
 
 `Pinentry-TouchID` is now fully configured!
