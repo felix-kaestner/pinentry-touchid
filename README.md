@@ -72,4 +72,8 @@ Configure the `gpg-agent` to use `pinentry-touchid` as its pinentry program. Add
 $ pinentry-program /usr/local/bin/pinentry-touchid
 ```
 
-`Pinentry-TouchID` is now fully configured!
+`Pinentry-TouchID` is now fully configured! 
+
+When used for the first time, MacOS will prompt you to allow access to the keychain. Simply provide access by using your user password and clicking `Always Allow`, so you won't be asked on every use.
+
+<img width="546" src="https://user-images.githubusercontent.com/23213965/162564580-0949974b-65cc-49ca-91ff-37af8923d524.png">
