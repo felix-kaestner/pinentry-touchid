@@ -16,7 +16,7 @@ success() {
 main() {
     info "Building"
     swift build -c release
-    cp -f .build/release/Pinentry-TouchID $HOME/.local/bin/pinentry-touchid
+    cp -f .build/release/Pinentry-TouchID /usr/local/bin/pinentry-touchid
     success "Build complete!"
 }
 
