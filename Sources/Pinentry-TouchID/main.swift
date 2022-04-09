@@ -1,6 +1,8 @@
 import Foundation
 import LocalAuthentication
 
+let service = "GnuPG"
+
 let emailRegex = try! NSRegularExpression(pattern: "\"(?<name>.*<(?<email>.*)>)\"")
 let keyIDRegex = try! NSRegularExpression(pattern: "ID (?<keyId>.*),")
 let sshIDRegex = try! NSRegularExpression(pattern: "SHA256:(?<keyId>.*)")
@@ -22,23 +24,24 @@ func findMatches(input: String, regex: NSRegularExpression) -> [String] {
 }
 
 func main() {
-    let service = "GnuPG"
-    let ctx = LAContext()
-    ctx.touchIDAuthenticationAllowableReuseDuration = 0
-    
     var key: String? = nil
-    
     var reason = "log in to your account"
     
-    var error: NSError?
-    guard ctx.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+    let ctx = LAContext()
+    guard ctx.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {
         print("ERR Your Mac doesn't support deviceOwnerAuthenticationWithBiometrics")
         exit(EXIT_FAILURE)
     }
     
     print("OK Pleased to meet you")
     while let input = readLine() {
-        if input.hasPrefix("SETDESC") {
+        switch input {
+        case _ where input.hasPrefix("SETKEYINFO"):
+            // KeyInfo is always in the form of x/cacheId
+            // https://gist.github.com/mdeguzis/05d1f284f931223624834788da045c65#file-info-pinentry-L357-L362
+            key = input.components(separatedBy: "/")[1]
+            print("OK")
+        case _ where input.hasPrefix("SETDESC"):
             let description = String(input.dropFirst("SETDESC ".count)).removingPercentEncoding!
             
             var matches = findMatches(input: description, regex: emailRegex)
@@ -63,21 +66,8 @@ func main() {
                     reason = "access the PIN for ssh key \(matches[1])"
                 }
             }
-            
             print("OK")
-            continue
-        }
-        
-        if input.hasPrefix("SETKEYINFO") {
-            // KeyInfo is always in the form of x/cacheId
-            // https://gist.github.com/mdeguzis/05d1f284f931223624834788da045c65#file-info-pinentry-L357-L362
-            key = input.components(separatedBy: "/")[1]
-            print("OK")
-            continue
-        }
-        
-        switch input.lowercased() {
-        case "getpin":
+        case _ where input.hasPrefix("GETPIN"):
             guard key != nil else { exit(EXIT_FAILURE) }
             
             ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, error in
@@ -87,7 +77,7 @@ func main() {
                         print("D \(String(data: password, encoding: .utf32)!)")
                         print("OK")
                     } catch {
-                        print("ERR \(error.localizedDescription)")
+                        print("ERR Failed to read passphrase from MacOS Keychain")
                         exit(EXIT_FAILURE)
                     }
                 } else {
@@ -95,7 +85,7 @@ func main() {
                     exit(EXIT_FAILURE)
                 }
             }
-        case "bye":
+        case _ where input.hasPrefix("BYE"):
             print("OK closing connection")
             exit(EXIT_FAILURE)
         default:
