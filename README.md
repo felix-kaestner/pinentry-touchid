@@ -39,12 +39,6 @@ Build the binary using:
 $ ./build.sh
 ```
 
-Afterwards, make sure to add the following into your `.bashrc`/`.zshrc`:
-
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
-
 ## Quickstart
 
 List the keygrip of the GPG Key for which you want to store the passphrase:
