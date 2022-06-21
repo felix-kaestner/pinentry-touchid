@@ -1,6 +1,6 @@
 import Foundation
 
-/// Based on:  https://www.advancedswift.com/secure-private-data-keychain-swift/#keychain-delete-example
+/// Based on:  https://www.advancedswift.com/secure-private-data-keychain-swift
 
 enum KeychainError: Error {
     // Attempted read for an item that does not exist.
